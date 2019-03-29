@@ -1,5 +1,9 @@
+import {
+    StorageModule,
+    StorageModuleConfig,
+} from '@worldbrain/storex-pattern-modules'
+
 import { StorageManager } from '..'
-import { FeatureStorage } from '../storage'
 import {
     SearchParams as OldSearchParams,
     SearchResult as OldSearchResult,
@@ -9,7 +13,6 @@ import { Annotation } from 'src/direct-linking/types'
 import { PageUrlMapperPlugin } from './page-url-mapper'
 import { reshapeParamsForOldSearch } from './utils'
 import { AnnotationsListPlugin } from './annots-list'
-import { Tag, Bookmark } from 'src/search/models'
 
 export interface SearchStorageProps {
     storageManager: StorageManager
@@ -29,42 +32,29 @@ export type LegacySearch = (
     totalCount: number
 }>
 
-export default class SearchStorage extends FeatureStorage {
+export default class SearchStorage extends StorageModule {
     private legacySearch
 
     constructor({ storageManager, legacySearch }: SearchStorageProps) {
-        super(storageManager)
+        super({ storageManager })
 
         this.legacySearch = legacySearch
     }
 
-    private async calcLatestInteraction(url: string, upperTimeBound?: number) {
-        let max = 0
-        const visitQuery: any = { url }
-        const bmQuery: any = { url }
-
-        if (upperTimeBound) {
-            visitQuery.time = { $lte: upperTimeBound }
-            bmQuery.time = { $lte: upperTimeBound }
-        }
-
-        const [visits, bookmark] = await Promise.all([
-            this.storageManager
-                .collection('visits')
-                .findObjects<Interaction>(visitQuery),
-            this.storageManager
-                .collection('bookmarks')
-                .findOneObject<Interaction>(bmQuery),
-        ])
-
-        max = visits.sort((a, b) => b.time - a.time)[0].time
-
-        if (!!bookmark && bookmark.time > max) {
-            max = bookmark.time
-        }
-
-        return max
-    }
+    getConfig = (): StorageModuleConfig => ({
+        operations: {
+            findAnnotBookmarksByUrl: {
+                collection: 'annotBookmarks',
+                operation: 'findAllObjects',
+                args: { url: { $in: '$annotUrls:string[]' } },
+            },
+            findAnnotTagsByUrl: {
+                collection: 'tags',
+                operation: 'findAllObjects',
+                args: [{ url: { $in: '$annotUrls:string[]' } }, { limit: 4 }],
+            },
+        },
+    })
 
     private async findAnnotsDisplayData(
         annotUrls: string[],
@@ -72,17 +62,13 @@ export default class SearchStorage extends FeatureStorage {
         annotsToTags: Map<string, string[]>
         bmUrls: Set<string>
     }> {
-        const bookmarks = await this.storageManager
-            .collection('annotBookmarks')
-            .findAllObjects<Bookmark>({
-                url: { $in: annotUrls },
-            })
+        const bookmarks = await this.operation('findAnnotBookmarksByUrl', {
+            annotUrls,
+        })
 
-        const bmUrls = new Set(bookmarks.map(bm => bm.url))
+        const bmUrls = new Set<string>(bookmarks.map(bm => bm.url))
 
-        const tags = await this.storageManager
-            .collection('tags')
-            .findAllObjects<Tag>({ url: { $in: annotUrls } }, { limit: 4 })
+        const tags = await this.operation('findAnnotTagsByUrl', { annotUrls })
 
         const annotsToTags = new Map<string, string[]>()
 
@@ -105,7 +91,7 @@ export default class SearchStorage extends FeatureStorage {
         const results: Map<
             number,
             Map<string, Annotation[]>
-        > = await this.storageManager.operation(
+        > = await this.operation(
             AnnotationsListPlugin.LIST_BY_DAY_OP_ID,
             params,
         )
@@ -116,7 +102,7 @@ export default class SearchStorage extends FeatureStorage {
             pageUrls = new Set([...pageUrls, ...annotsByPage.keys()])
         }
 
-        const pages: AnnotPage[] = await this.storageManager.operation(
+        const pages: AnnotPage[] = await this.operation(
             PageUrlMapperPlugin.MAP_OP_ID,
             [...pageUrls],
             { base64Img: params.base64Img, upperTimeBound: params.endDate },
@@ -188,15 +174,12 @@ export default class SearchStorage extends FeatureStorage {
     }
 
     private async searchTermsAnnots(params: AnnotSearchParams) {
-        const results: Map<
-            string,
-            Annotation[]
-        > = await this.storageManager.operation(
+        const results: Map<string, Annotation[]> = await this.operation(
             AnnotationsListPlugin.TERMS_SEARCH_OP_ID,
             params,
         )
 
-        const pages: AnnotPage[] = await this.storageManager.operation(
+        const pages: AnnotPage[] = await this.operation(
             PageUrlMapperPlugin.MAP_OP_ID,
             [...results.keys()],
             { base64Img: params.base64Img, upperTimeBound: params.endDate },
@@ -243,7 +226,7 @@ export default class SearchStorage extends FeatureStorage {
         const latestTimes =
             ids[0].length === 3 ? ids.map(([, , time]) => time) : undefined
 
-        return this.storageManager.operation(
+        return this.operation(
             PageUrlMapperPlugin.MAP_OP_ID,
             ids.map(([url]) => url),
             {

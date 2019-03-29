@@ -59,20 +59,10 @@ export default class CustomListBackground {
     }
 
     async fetchAllLists({ excludeIds = [], skip = 0, limit = 20 }) {
-        const query = {
-            id: {
-                $nin: excludeIds,
-            },
-        }
-
-        const opts = {
+        return this.storage.fetchAllLists({
+            excludedIds: excludeIds,
             limit,
             skip,
-        }
-
-        return this.storage.fetchAllLists({
-            query,
-            opts,
         })
     }
 
@@ -81,7 +71,7 @@ export default class CustomListBackground {
     }
 
     async fetchListByName({ name }: { name: string }) {
-        return this.storage.fetchListByName(name)
+        return this.storage.fetchListIgnoreCase({ name })
     }
 
     async insertMissingLists({ names }: { names: string[] }) {

@@ -26,11 +26,6 @@ describe('Tags', () => {
             const tags = await bg.fetchPageTags({ url })
             expect(tags.length).toBe(1)
         })
-
-        test('fetch pages', async () => {
-            const pages = await bg.fetchPages({ name: 'lorem' })
-            expect(pages.length).toBe(1)
-        })
     })
 
     describe('delete ops', () => {

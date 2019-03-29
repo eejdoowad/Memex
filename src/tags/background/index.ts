@@ -98,8 +98,4 @@ export default class TagsBackground {
     async delTag({ name, url }: { name: string; url: string }) {
         return this.storage.delTag({ name, url: normalizeUrl(url) })
     }
-
-    async fetchPages({ name }: { name: string }) {
-        return this.storage.fetchPages({ name })
-    }
 }
