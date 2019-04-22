@@ -3,24 +3,8 @@ import { DexieStorageBackend } from '@worldbrain/storex-backend-dexie'
 
 import { Dexie as DexieExtended } from './types'
 
-export interface TableDef {
-    table: string
-    model: any
-}
-
-export default ({
-    backend,
-    tableClasses = [],
-}: {
-    backend: DexieStorageBackend
-    tableClasses: TableDef[]
-}) => {
+export default ({ backend }: { backend: DexieStorageBackend }) => {
     const dexie = backend.dexieInstance
-
-    // Set up model classes
-    for (const tableClass of tableClasses) {
-        dexie[`${tableClass.table}`].mapToClass(tableClass.model)
-    }
 
     /**
      * Overrides `Dexie._createTransaction` to ensure to add `backupChanges` table to any readwrite transaction.

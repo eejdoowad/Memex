@@ -22,18 +22,11 @@ export default class DirectLinkingBackground {
     private sendAnnotation: AnnotationSender
     private requests: AnnotationRequests
 
-    constructor({
-        storageManager,
-        getDb,
-    }: {
-        storageManager: StorageManager
-        getDb: () => Promise<Dexie>
-    }) {
+    constructor({ storageManager }: { storageManager: StorageManager }) {
         this.backend = new DirectLinkingBackend()
 
         this.annotationStorage = new AnnotationStorage({
             storageManager,
-            getDb,
         })
 
         this.sendAnnotation = ({ tabId, annotation }) => {

@@ -1,6 +1,6 @@
 import initStorageManager from '../memory-storex'
 import { StorageManager } from '..'
-import getDb, { setStorexBackend } from '../get-db'
+import { setStorexBackend } from '../get-db'
 import SearchBg from './index'
 import normalize from 'src/util/encode-url-for-id'
 import CustomListBg from 'src/custom-lists/background'
@@ -94,17 +94,15 @@ describe.skip('Annotations search', () => {
         storageManager = initStorageManager()
         annotsBg = new AnnotsBg({
             storageManager,
-            getDb,
         })
 
         searchBg = new SearchBg({
             storageManager,
-            getDb,
             tabMan: { getActiveTab: () => ({ id: 1, url: 'test' }) } as any,
             bookmarksAPI: { onCreated: mockEvent, onRemoved: mockEvent } as any,
         })
 
-        customListsBg = new CustomListBg({ storageManager, getDb })
+        customListsBg = new CustomListBg({ storageManager })
         annotsStorage = annotsBg['annotationStorage']
 
         await storageManager.finishInitialization()

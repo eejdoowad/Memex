@@ -242,9 +242,15 @@ export default class Page extends AbstractModel
             this.loadBlobs()
 
             // Grab DB data
-            const visits = await db.visits.where({ url: this.url }).toArray()
-            const tags = await db.tags.where({ url: this.url }).toArray()
-            const bookmark = await db.bookmarks.get(this.url)
+            const visits = await db
+                .table('visits')
+                .where({ url: this.url })
+                .toArray()
+            const tags = await db
+                .table('tags')
+                .where({ url: this.url })
+                .toArray()
+            const bookmark = await db.table('bookmarks').get(this.url)
 
             this[visitsProp] = visits
             this[tagsProp] = tags
@@ -265,10 +271,22 @@ export default class Page extends AbstractModel
         const db = await getDb()
         return db.transaction('rw', db.tables, () =>
             Promise.all([
-                db.visits.where({ url: this.url }).delete(),
-                db.bookmarks.where({ url: this.url }).delete(),
-                db.tags.where({ url: this.url }).delete(),
-                db.pages.where({ url: this.url }).delete(),
+                db
+                    .table('visits')
+                    .where({ url: this.url })
+                    .delete(),
+                db
+                    .table('bookmarks')
+                    .where({ url: this.url })
+                    .delete(),
+                db
+                    .table('tags')
+                    .where({ url: this.url })
+                    .delete(),
+                db
+                    .table('pages')
+                    .where({ url: this.url })
+                    .delete(),
             ]),
         )
     }
@@ -279,7 +297,7 @@ export default class Page extends AbstractModel
             this.loadBlobs()
 
             // Merge any new data with any existing
-            const existing = await db.pages.get(this.url)
+            const existing = await db.table('pages').get(this.url)
             if (existing) {
                 this._mergeTerms('terms', existing.terms)
                 this._mergeTerms('urlTerms', existing.urlTerms)
@@ -291,7 +309,7 @@ export default class Page extends AbstractModel
             }
 
             // Persist current page state
-            await db.pages.put(this)
+            await db.table('pages').put(this)
 
             // Insert or update all associated visits + tags
             const [visitIds, tagIds] = await Promise.all([
@@ -303,18 +321,23 @@ export default class Page extends AbstractModel
             if (this[bookmarkProp] != null) {
                 this[bookmarkProp].save(getDb)
             } else {
-                await db.bookmarks.where({ url: this.url }).delete()
+                await db
+                    .table('bookmarks')
+                    .where({ url: this.url })
+                    .delete()
             }
 
             // Remove any visits no longer associated with this page
             const visitTimes = new Set(visitIds.map(([time]) => time))
             const tagNames = new Set(tagIds.map(([name]) => name))
             await Promise.all([
-                db.visits
+                db
+                    .table('visits')
                     .where({ url: this.url })
                     .filter(visit => !visitTimes.has(visit.time))
                     .delete(),
-                db.tags
+                db
+                    .table('tags')
                     .where({ url: this.url })
                     .filter(tag => !tagNames.has(tag.name))
                     .delete(),

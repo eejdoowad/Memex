@@ -18,12 +18,10 @@ export default class CustomListBackground {
 
     constructor({
         storageManager,
-        getDb,
         tabMan,
         windows,
     }: {
         storageManager: StorageManager
-        getDb: () => Promise<Dexie>
         tabMan?: TabManager
         windows?: Windows.Static
     }) {
@@ -31,7 +29,7 @@ export default class CustomListBackground {
         this.storage = new CustomListStorage({
             storageManager,
         })
-        this.getDb = getDb
+        this.getDb = () => storageManager.backend['dexieInstance']
         this.tabMan = tabMan
         this.windows = windows
     }

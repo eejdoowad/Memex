@@ -15,11 +15,11 @@ const deletePages = async (
 ) => {
     const db = await getDb()
     return db.transaction('rw', db.tables, async () => {
-        const pages = await applyQuery(db.pages).toArray()
+        const pages = await applyQuery(db.table('pages')).toArray()
 
-        await Promise.all(pages.map(page => page.delete(getDb))).catch(
-            initErrHandler(),
-        )
+        await Promise.all(
+            pages.map(page => new Page(page).delete(getDb)),
+        ).catch(initErrHandler())
     })
 }
 

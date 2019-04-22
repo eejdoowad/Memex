@@ -53,6 +53,25 @@ export default class SearchStorage extends StorageModule {
                 operation: 'findAllObjects',
                 args: [{ url: { $in: '$annotUrls:string[]' } }, { limit: 4 }],
             },
+            searchAnnotsByDay: {
+                operation: AnnotationsListPlugin.LIST_BY_PAGE_OP_ID,
+                args: [],
+            },
+            searchAnnotsByTerm: {
+                operation: AnnotationsListPlugin.TERMS_SEARCH_OP_ID,
+                args: [],
+            },
+            [PageUrlMapperPlugin.MAP_OP_ID]: {
+                operation: PageUrlMapperPlugin.MAP_OP_ID,
+                args: [
+                    { pageUrls: '$pageUrls:string[]' },
+                    {
+                        base64Img: '$base64Img:boolean',
+                        upperTimeBound: '$endDate:number',
+                        latestTimes: '$latestTimes:number[]',
+                    },
+                ],
+            },
         },
     })
 
@@ -91,10 +110,7 @@ export default class SearchStorage extends StorageModule {
         const results: Map<
             number,
             Map<string, Annotation[]>
-        > = await this.operation(
-            AnnotationsListPlugin.LIST_BY_DAY_OP_ID,
-            params,
-        )
+        > = await this.operation('searchAnnotsByDay', params)
 
         let pageUrls = new Set<string>()
 
@@ -102,11 +118,11 @@ export default class SearchStorage extends StorageModule {
             pageUrls = new Set([...pageUrls, ...annotsByPage.keys()])
         }
 
-        const pages: AnnotPage[] = await this.operation(
-            PageUrlMapperPlugin.MAP_OP_ID,
-            [...pageUrls],
-            { base64Img: params.base64Img, upperTimeBound: params.endDate },
-        )
+        const pages: AnnotPage[] = await this.operation('mapUrlsToPages', {
+            pageUrls: [...pageUrls],
+            base64Img: params.base64Img,
+            upperTimeBound: params.endDate,
+        })
 
         const clusteredResults: PageUrlsByDay = {}
 
@@ -175,15 +191,15 @@ export default class SearchStorage extends StorageModule {
 
     private async searchTermsAnnots(params: AnnotSearchParams) {
         const results: Map<string, Annotation[]> = await this.operation(
-            AnnotationsListPlugin.TERMS_SEARCH_OP_ID,
+            'searchAnnotsByTerm',
             params,
         )
 
-        const pages: AnnotPage[] = await this.operation(
-            PageUrlMapperPlugin.MAP_OP_ID,
-            [...results.keys()],
-            { base64Img: params.base64Img, upperTimeBound: params.endDate },
-        )
+        const pages: AnnotPage[] = await this.operation('mapUrlsToPages', {
+            pageUrls: [...results.keys()],
+            base64Img: params.base64Img,
+            upperTimeBound: params.endDate,
+        })
 
         const annotUrls = [].concat(...results.values()).map(annot => annot.url)
 
@@ -226,14 +242,11 @@ export default class SearchStorage extends StorageModule {
         const latestTimes =
             ids[0].length === 3 ? ids.map(([, , time]) => time) : undefined
 
-        return this.operation(
-            PageUrlMapperPlugin.MAP_OP_ID,
-            ids.map(([url]) => url),
-            {
-                upperTimeBound: params.endDate,
-                latestTimes,
-                base64Img: params.base64Img,
-            },
-        )
+        return this.operation(PageUrlMapperPlugin.MAP_OP_ID, {
+            pageUrls: ids.map(([url]) => url),
+            upperTimeBound: params.endDate,
+            base64Img: params.base64Img,
+            latestTimes,
+        })
     }
 }

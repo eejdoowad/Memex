@@ -3,8 +3,6 @@ import { StorageCollection } from '@worldbrain/storex/lib/types/manager'
 import DexieOrig from 'dexie'
 import { FilterQuery } from 'dexie-mongoify'
 
-import { Page, Visit, Bookmark, Tag, FavIcon } from './models'
-
 export type SuggestOptions = FindManyOptions & { includePks?: boolean }
 export type SuggestResult<S, P> = Array<{
     collection: string
@@ -31,30 +29,6 @@ export interface StorageManager extends Storex {
 }
 
 export interface Dexie extends DexieOrig {
-    /**
-     * Represents page data - our main data type.
-     */
-    pages: DexieOrig.Table<Page, string>
-
-    /**
-     * Represents page visit timestamp and activity data.
-     */
-    visits: DexieOrig.Table<Visit, [number, string]>
-
-    /**
-     * Represents page visit timestamp and activity data.
-     */
-    bookmarks: DexieOrig.Table<Bookmark, string>
-
-    /**
-     * Represents tags associated with Pages.
-     */
-    tags: DexieOrig.Table<Tag, [string, string]>
-
-    /**
-     * Represents fav-icons associated with hostnames.
-     */
-    favIcons: DexieOrig.Table<FavIcon, string>
     // Quick typings as `dexie-mongoify` doesn't contain any
     collection: <T>(
         name: string,

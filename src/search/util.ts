@@ -1,4 +1,5 @@
 import { Dexie } from './types'
+import { Page } from './models'
 import normalizeUrl from '../util/encode-url-for-id'
 import { initErrHandler } from './storage'
 
@@ -7,11 +8,14 @@ export const URL_SEPARATOR = /[/?#=+& _.,\-|(\n)]+/
 
 export const getPage = (getDb: () => Promise<Dexie>) => async (url: string) => {
     const db = await getDb()
-    const page = await db.pages.get(normalizeUrl(url)).catch(initErrHandler())
+    const page = await db
+        .table('pages')
+        .get(normalizeUrl(url))
+        .catch(initErrHandler())
 
     if (page != null) {
         // Force-load any related records from other tables
-        await page.loadRels(getDb)
+        await new Page(page).loadRels(getDb)
     }
 
     return page
@@ -25,10 +29,25 @@ export const getPage = (getDb: () => Promise<Dexie>) => async (url: string) => {
 export const grabExistingKeys = (getDb: () => Promise<Dexie>) => async () => {
     const db = await getDb()
     return db
-        .transaction('r', db.pages, db.bookmarks, async () => ({
-            histKeys: new Set(await db.pages.toCollection().primaryKeys()),
-            bmKeys: new Set(await db.bookmarks.toCollection().primaryKeys()),
-        }))
+        .transaction(
+            'r',
+            db.table('pages'),
+            db.table('bookmarks'),
+            async () => ({
+                histKeys: new Set(
+                    await db
+                        .table('pages')
+                        .toCollection()
+                        .primaryKeys(),
+                ),
+                bmKeys: new Set(
+                    await db
+                        .table('bookmarks')
+                        .toCollection()
+                        .primaryKeys(),
+                ),
+            }),
+        )
         .catch(initErrHandler({ histKeys: new Set(), bmKeys: new Set() }))
 }
 

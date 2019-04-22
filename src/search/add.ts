@@ -63,8 +63,9 @@ export const updateTimestampMeta = (getDb: () => Promise<Dexie>) => async (
     const normalized = normalizeUrl(url)
 
     await db
-        .transaction('rw', db.visits, () =>
-            db.visits
+        .transaction('rw', db.table('visits'), () =>
+            db
+                .table('visits')
                 .where('[time+url]')
                 .equals([time, normalized])
                 .modify(data),

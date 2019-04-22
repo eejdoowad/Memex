@@ -428,8 +428,8 @@ describe('Search index integration', () => {
             await idx.addFavIcon(getDb)(DATA.PAGE_1.url, DATA.FAV_1)
             await idx.addFavIcon(getDb)(DATA.PAGE_2.url, DATA.FAV_1)
 
-            const fav1 = await db.favIcons.get(hostname1)
-            const fav2 = await db.favIcons.get(hostname2)
+            const fav1 = await db.table('favIcons').get(hostname1)
+            const fav2 = await db.table('favIcons').get(hostname2)
             expect(fav1.hostname).toBe(hostname1)
             expect(fav2.hostname).toBe(hostname2)
         })

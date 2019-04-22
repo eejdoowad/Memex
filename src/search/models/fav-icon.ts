@@ -43,17 +43,17 @@ export default class FavIcon extends AbstractModel {
 
     public async delete(getDb: () => Promise<Dexie>) {
         const db = await getDb()
-        return db.transaction('rw', db.favIcons, () =>
-            db.favIcons.delete(this.hostname),
+        return db.transaction('rw', db.table('favIcons'), () =>
+            db.table('favIcons').delete(this.hostname),
         )
     }
 
     public async save(getDb: () => Promise<Dexie>) {
         const db = await getDb()
-        return db.transaction('rw', db.favIcons, () => {
+        return db.transaction('rw', db.table('favIcons'), () => {
             // Could have been errors converting the data url to blob
             if (this.favIcon !== null) {
-                db.favIcons.put(this)
+                db.table('favIcons').put(this)
             }
         })
     }

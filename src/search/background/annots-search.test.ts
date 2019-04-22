@@ -1,6 +1,6 @@
 import initStorageManager from '../memory-storex'
 import { StorageManager } from '..'
-import getDb, { setStorexBackend } from '../get-db'
+import { setStorexBackend } from '../get-db'
 import { AnnotationsListPlugin } from './annots-list'
 import * as DATA from './annots-search.test.data'
 import CustomListBg from 'src/custom-lists/background'
@@ -88,8 +88,8 @@ describe.skip('annots search plugin', () => {
 
     beforeEach(async () => {
         storageManager = initStorageManager()
-        annotsBg = new AnnotsBg({ storageManager, getDb })
-        customListsBg = new CustomListBg({ storageManager, getDb })
+        annotsBg = new AnnotsBg({ storageManager })
+        customListsBg = new CustomListBg({ storageManager })
 
         await storageManager.finishInitialization()
         setStorexBackend(storageManager.backend)

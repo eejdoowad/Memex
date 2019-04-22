@@ -1,6 +1,5 @@
 import initDexie from './dexie'
 import { Dexie } from './types'
-import { Page, Visit, Bookmark, Tag, FavIcon } from './models'
 
 /*
  * Bit of a hack to allow the storex Dexie backend to be available to all
@@ -21,18 +20,7 @@ export const setStorexBackend = backend => {
     }
 
     // Extend the base Dexie instance with all the Memex-specific stuff we've added
-    resolveDb(
-        initDexie({
-            backend,
-            tableClasses: [
-                { table: 'pages', model: Page },
-                { table: 'visits', model: Visit },
-                { table: 'bookmarks', model: Bookmark },
-                { table: 'tags', model: Tag },
-                { table: 'favIcons', model: FavIcon },
-            ],
-        }),
-    )
+    resolveDb(initDexie({ backend }))
 
     resolveDb = null
 }

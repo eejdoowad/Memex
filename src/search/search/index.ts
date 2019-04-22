@@ -78,7 +78,8 @@ export const getMatchingPageCount = (
 ) => async pattern => {
     const db = await getDb()
     const re = new RegExp(pattern, 'i')
-    return db.pages
+    return db
+        .table('pages')
         .filter(page => re.test(page.url))
         .count()
         .catch(initErrHandler(0))

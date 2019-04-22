@@ -23,16 +23,18 @@ export const suggest = (getDb: () => Promise<Dexie>) => async (
     switch (type) {
         case 'domain': {
             const domains = await applyQuery<Page, string>(
-                db.pages.where('domain'),
+                db.table('pages').where('domain'),
             )
             const hostnames = await applyQuery<Page, string>(
-                db.pages.where('hostname'),
+                db.table('pages').where('hostname'),
             )
             return [...new Set([...domains, ...hostnames])]
         }
         case 'tag':
         default:
-            return applyQuery<Tag, [string, string]>(db.tags.where('name'))
+            return applyQuery<Tag, [string, string]>(
+                db.table('tags').where('name'),
+            )
     }
 }
 
@@ -105,15 +107,17 @@ export const extendedSuggest = (getDb: () => Promise<Dexie>) => async (
     switch (type) {
         case 'domain': {
             const domains = await applyQuery<Page, string>(
-                db.pages.where('domain'),
+                db.table('pages').where('domain'),
             )
             const hostnames = await applyQuery<Page, string>(
-                db.pages.where('hostname'),
+                db.table('pages').where('hostname'),
             )
             return [...new Set([...domains, ...hostnames])]
         }
         case 'tag':
         default:
-            return applyQuery<Tag, [string, string]>(db.tags.where('name'))
+            return applyQuery<Tag, [string, string]>(
+                db.table('tags').where('name'),
+            )
     }
 }

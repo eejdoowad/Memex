@@ -35,14 +35,12 @@ notifications.setupRemoteFunctions()
 
 export const directLinking = new DirectLinkingBackground({
     storageManager,
-    getDb,
 })
 directLinking.setupRemoteFunctions()
 directLinking.setupRequestInterceptor()
 
 const search = new SearchBackground({
     storageManager,
-    getDb,
     tabMan: tabManager,
 })
 search.setupRemoteFunctions()
@@ -52,7 +50,6 @@ eventLog.setupRemoteFunctions()
 
 export const customList = new CustomListBackground({
     storageManager,
-    getDb,
     tabMan: tabManager,
     windows: browser.windows,
 })
@@ -60,7 +57,6 @@ customList.setupRemoteFunctions()
 
 export const tags = new TagsBackground({
     storageManager,
-    getDb,
     tabMan: tabManager,
     windows: browser.windows,
 })

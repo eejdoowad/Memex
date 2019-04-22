@@ -23,7 +23,10 @@ const termQuery = (
     getDb: () => Promise<Dexie>,
 ) => async (index: TermsIndexName) => {
     const db = await getDb()
-    let coll = db.pages.where(index).equals(term)
+    let coll = db
+        .table('pages')
+        .where(index)
+        .equals(term)
 
     // Adding a `.filter/.and` clause to a collection means it needs to iterate through
     if (excluded.length) {

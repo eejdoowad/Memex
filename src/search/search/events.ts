@@ -32,7 +32,8 @@ export const mapUrlsToLatestEvents = (getDb: () => Promise<Dexie>) => async (
     }
 
     const latestBookmarks: PageResultsMap = new Map()
-    await db.bookmarks
+    await db
+        .table('bookmarks')
         .where('url')
         .anyOf(urls)
         .each(({ time, url }) =>
@@ -44,7 +45,8 @@ export const mapUrlsToLatestEvents = (getDb: () => Promise<Dexie>) => async (
     // Simple state to keep track of when to finish each query
     const doneFlags = urlsToCheck.map(url => false)
 
-    const visits = await db.visits
+    const visits = await db
+        .table('visits')
         .where('url')
         .anyOf(urlsToCheck)
         .reverse()
@@ -104,7 +106,8 @@ const lookbackFromEndDate = (getDb: () => Promise<Dexie>) => async (
     const db = await getDb()
     // Lookback from endDate to get needed amount of visits
     const latestVisits: PageResultsMap = new Map()
-    await db.visits
+    await db
+        .table('visits')
         .where('[time+url]')
         .between(
             [startDate, ''],
@@ -126,7 +129,8 @@ const lookbackFromEndDate = (getDb: () => Promise<Dexie>) => async (
 
     // Similar lookback on bookmarks
     const latestBookmarks: PageResultsMap = new Map()
-    await db.bookmarks
+    await db
+        .table('bookmarks')
         .where('time')
         .between(startDate, endDate, true, true)
         .reverse()
@@ -169,7 +173,8 @@ const lookbackBookmarksTime = (getDb: () => Promise<Dexie>) => async ({
         const bms: PageResultsMap = new Map()
 
         // Grab latest page of bookmarks
-        await db.bookmarks
+        await db
+            .table('bookmarks')
             .where('time')
             .belowOrEqual(upperBound)
             .reverse() // Latest first
@@ -185,7 +190,8 @@ const lookbackBookmarksTime = (getDb: () => Promise<Dexie>) => async ({
             [...bms].map(async ([currentUrl, currentTime]) => {
                 if (currentTime > endDate || currentTime < startDate) {
                     let done = false
-                    await db.visits
+                    await db
+                        .table('visits')
                         .where('url')
                         .equals(currentUrl)
                         .reverse()

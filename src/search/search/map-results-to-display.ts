@@ -18,7 +18,7 @@ const mapPageToDisplay = (
     getDb: () => Promise<Dexie>,
 ) =>
     async function([url]: SearchResult): Promise<SearchDisplayResult> {
-        const page = pagesMap.get(url)
+        const page = new Page(pagesMap.get(url))
         const favIcon = favIconsMap.get(page.hostname)
         await page.loadRels(getDb)
 
@@ -48,7 +48,8 @@ export const mapResultsToDisplay = (getDb: () => Promise<Dexie>) => async (
     const favIconsMap = new Map<string, FavIcon>()
 
     // Grab all pages + tags for pages, creating a Map for easy lookup-by-URL + set of hostnames
-    await db.pages
+    await db
+        .table('pages')
         .where('url')
         .anyOf(resultUrls)
         .each(page => {
@@ -57,7 +58,8 @@ export const mapResultsToDisplay = (getDb: () => Promise<Dexie>) => async (
         })
 
     // Grab all corresponding fav-icons for hostnames set
-    await db.favIcons
+    await db
+        .table('favIcons')
         .where('hostname')
         .anyOf(...hostnamesSet)
         .each(favIcon => favIconsMap.set(favIcon.hostname, favIcon))

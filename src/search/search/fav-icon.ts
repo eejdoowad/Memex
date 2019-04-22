@@ -8,6 +8,9 @@ export const domainHasFavIcon = (getDb: () => Promise<Dexie>) => async (
     const db = await getDb()
     const { hostname } = transformUrl(url)
 
-    const res = await db.favIcons.get(hostname).catch(initErrHandler())
+    const res = await db
+        .table('favIcons')
+        .get(hostname)
+        .catch(initErrHandler())
     return res != null
 }

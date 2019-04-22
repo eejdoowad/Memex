@@ -8,7 +8,8 @@ const pageIndexLookup = (getDb: () => Promise<Dexie>) => async (
     matches: string[],
 ) => {
     const db = await getDb()
-    return db.pages
+    return db
+        .table('pages')
         .where(index)
         .anyOf(matches)
         .primaryKeys()
@@ -80,7 +81,8 @@ const tagSearch = (getDb: () => Promise<Dexie>) => async (tags: string[]) => {
 
     const urls = new Set<string>()
 
-    await db.tags
+    await db
+        .table('tags')
         .where('name')
         .anyOf(tags)
         .eachPrimaryKey(([name, url]) => urls.add(url))

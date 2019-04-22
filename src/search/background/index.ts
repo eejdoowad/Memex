@@ -46,25 +46,23 @@ export default class SearchBackground {
 
     constructor({
         storageManager,
-        getDb,
         tabMan,
         queryBuilder = () => new QueryBuilder(),
         idx = index,
         bookmarksAPI = browser.bookmarks,
     }: {
         storageManager: StorageManager
-        getDb: () => Promise<Dexie>
         queryBuilder?: () => QueryBuilder
         tabMan: TabManager
         idx?: typeof index
         bookmarksAPI?: Bookmarks.Static
     }) {
         this.tabMan = tabMan
-        this.getDb = getDb
+        this.getDb = () => storageManager.backend['dexieInstance']
         this.queryBuilderFactory = queryBuilder
         this.storage = new SearchStorage({
             storageManager,
-            legacySearch: idx.fullSearch(getDb),
+            legacySearch: idx.fullSearch(this.getDb),
         })
         this.initBackend(idx)
 

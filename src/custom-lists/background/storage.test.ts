@@ -1,7 +1,6 @@
 import initStorageManager from '../../search/memory-storex'
 import CustomListBackground from './'
 import * as DATA from './storage.test.data'
-import { getDb } from 'src/search'
 
 describe('Custom List Integrations', () => {
     let bg: CustomListBackground
@@ -25,7 +24,7 @@ describe('Custom List Integrations', () => {
 
     beforeEach(async () => {
         const storageManager = initStorageManager()
-        bg = new CustomListBackground({ storageManager, getDb })
+        bg = new CustomListBackground({ storageManager })
 
         // NOTE: Each test starts creating lists at ID `1`
         let fakeListCount = 0

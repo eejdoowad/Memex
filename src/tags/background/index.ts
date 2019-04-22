@@ -20,17 +20,15 @@ export default class TagsBackground {
 
     constructor({
         storageManager,
-        getDb,
         tabMan,
         windows,
     }: {
         storageManager: StorageManager
-        getDb: () => Promise<Dexie>
         tabMan?: TabManager
         windows?: Windows.Static
     }) {
         this.storage = new TagStorage({ storageManager })
-        this.getDb = getDb
+        this.getDb = () => storageManager.backend['dexieInstance']
         this.tabMan = tabMan
         this.windows = windows
     }
