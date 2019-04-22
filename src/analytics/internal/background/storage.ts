@@ -69,7 +69,6 @@ export default class EventLogStorage extends StorageModule {
             const latest = await this.operation('findLatestEventOfType', {
                 type,
                 reverse: true,
-                limit: 1,
             })
 
             if (latest) {

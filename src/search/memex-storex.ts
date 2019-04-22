@@ -4,8 +4,7 @@ import UrlField from './storage/url-field'
 import schemaPatcher from './storage/dexie-schema'
 import collections from './old-schema'
 import initStorex from './storex'
-import { suggestObjects } from './search/suggest'
-import { StorageManager, Dexie } from './types'
+import { StorageManager } from './types'
 import { plugins } from './storex-plugins'
 
 export default () =>
@@ -25,10 +24,6 @@ export default () =>
             const oldMethod = storex.collection.bind(storex)
             storex.collection = (name: string) => ({
                 ...oldMethod(name),
-                suggestObjects: (query, opts) =>
-                    suggestObjects(
-                        async () => storex.backend['dexieInstance'] as Dexie,
-                    )(name, query, opts),
                 findByPk: function(pk) {
                     return this.backend.dexie[name].get(pk)
                 }.bind(storex),

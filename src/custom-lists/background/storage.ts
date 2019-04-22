@@ -2,6 +2,7 @@ import {
     StorageModule,
     StorageModuleConfig,
 } from '@worldbrain/storex-pattern-modules'
+import { SuggestPlugin, SuggestType } from 'src/search/search/suggest'
 
 import { PageList, PageListEntry } from './types'
 
@@ -135,16 +136,12 @@ export default class CustomListStorage extends StorageModule {
                 args: { listId: '$listId:pk', pageUrl: '$url:string' },
             },
             suggestLists: {
-                collection: CustomListStorage.CUSTOM_LISTS_COLL,
-                operation: 'suggestObjects',
-                args: [
-                    { name: '$name:string' },
-                    {
-                        includePks: '$includePks:boolean',
-                        ignoreCase: ['name'],
-                        limit: '$limit:int',
-                    },
-                ],
+                operation: SuggestPlugin.SUGGEST_OBJS_OP_ID,
+                args: {
+                    collection: '$collection:string',
+                    query: '$query:string',
+                    options: '$options:any',
+                },
             },
         },
     })

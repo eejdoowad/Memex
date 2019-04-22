@@ -546,7 +546,10 @@ class IndexDropdownContainer extends Component<Props, State> {
         let suggestions = this.state.filters
 
         try {
-            suggestions = await this.suggestRPC(searchVal, this.props.source)
+            suggestions = await this.suggestRPC({
+                query: searchVal,
+                type: this.props.source,
+            })
         } catch (err) {
             console.error(err)
         } finally {

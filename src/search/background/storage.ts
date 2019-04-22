@@ -13,6 +13,7 @@ import { Annotation } from 'src/direct-linking/types'
 import { PageUrlMapperPlugin } from './page-url-mapper'
 import { reshapeParamsForOldSearch } from './utils'
 import { AnnotationsListPlugin } from './annots-list'
+import { SuggestPlugin, SuggestType } from '../search/suggest'
 
 export interface SearchStorageProps {
     storageManager: StorageManager
@@ -72,8 +73,33 @@ export default class SearchStorage extends StorageModule {
                     },
                 ],
             },
+            suggest: {
+                operation: SuggestPlugin.SUGGEST_OP_ID,
+                args: {
+                    query: '$query:string',
+                    type: '$query:string',
+                    limit: '$limit:number',
+                },
+            },
+            suggestExtended: {
+                operation: SuggestPlugin.SUGGEST_EXT_OP_ID,
+                args: {
+                    notInclude: '$notInclude:string[]',
+                    type: '$query:string',
+                    limit: '$limit:number',
+                },
+            },
         },
     })
+
+    suggest = (args: { query: string; type: SuggestType; limit?: number }) =>
+        this.operation('suggest', args)
+
+    suggestExtended = (args: {
+        notInclude?: string[]
+        type: SuggestType
+        limit?: number
+    }) => this.operation('suggestExtended', args)
 
     private async findAnnotsDisplayData(
         annotUrls: string[],

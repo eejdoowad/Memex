@@ -349,45 +349,46 @@ describe('Search index integration', () => {
             testTags({ tags: ['quality'] }, { tags: ['quality', 'good'] }),
         )
 
-        test('domains suggest', async () => {
-            const expected1 = ['lorem.com']
-            expect(await idx.suggest(getDb)('l', 'domain')).toEqual(expected1)
-            expect(await idx.suggest(getDb)('lo', 'domain')).toEqual(expected1)
-            expect(await idx.suggest(getDb)('lol', 'domain')).not.toEqual(
-                expected1,
-            )
+        // TODO: Suggest code moved to storex plugin; Move these tests too
+        // test('domains suggest', async () => {
+        //     const expected1 = ['lorem.com']
+        //     expect(await idx.suggest(getDb)('l', 'domain')).toEqual(expected1)
+        //     expect(await idx.suggest(getDb)('lo', 'domain')).toEqual(expected1)
+        //     expect(await idx.suggest(getDb)('lol', 'domain')).not.toEqual(
+        //         expected1,
+        //     )
 
-            const expected2 = ['test.com']
-            expect(await idx.suggest(getDb)('t', 'domain')).toEqual(expected2)
-            expect(await idx.suggest(getDb)('te', 'domain')).toEqual(expected2)
-            expect(await idx.suggest(getDb)('tet', 'domain')).not.toEqual(
-                expected2,
-            )
+        //     const expected2 = ['test.com']
+        //     expect(await idx.suggest(getDb)('t', 'domain')).toEqual(expected2)
+        //     expect(await idx.suggest(getDb)('te', 'domain')).toEqual(expected2)
+        //     expect(await idx.suggest(getDb)('tet', 'domain')).not.toEqual(
+        //         expected2,
+        //     )
 
-            // New implementation should also support hostnames
-            const expected3 = ['sub.lorem.com']
-            expect(await idx.suggest(getDb)('s', 'domain')).toEqual(expected3)
-            expect(await idx.suggest(getDb)('su', 'domain')).toEqual(expected3)
-            expect(await idx.suggest(getDb)('sus', 'domain')).not.toEqual(
-                expected3,
-            )
-        })
+        //     // New implementation should also support hostnames
+        //     const expected3 = ['sub.lorem.com']
+        //     expect(await idx.suggest(getDb)('s', 'domain')).toEqual(expected3)
+        //     expect(await idx.suggest(getDb)('su', 'domain')).toEqual(expected3)
+        //     expect(await idx.suggest(getDb)('sus', 'domain')).not.toEqual(
+        //         expected3,
+        //     )
+        // })
 
-        test('tags suggest', async () => {
-            const expected1 = ['quality']
-            expect(await idx.suggest(getDb)('q', 'tag')).toEqual(expected1)
-            expect(await idx.suggest(getDb)('qu', 'tag')).toEqual(expected1)
-            expect(await idx.suggest(getDb)('quq', 'tag')).not.toEqual(
-                expected1,
-            )
+        // test('tags suggest', async () => {
+        //     const expected1 = ['quality']
+        //     expect(await idx.suggest(getDb)('q', 'tag')).toEqual(expected1)
+        //     expect(await idx.suggest(getDb)('qu', 'tag')).toEqual(expected1)
+        //     expect(await idx.suggest(getDb)('quq', 'tag')).not.toEqual(
+        //         expected1,
+        //     )
 
-            const expected2 = ['good']
-            expect(await idx.suggest(getDb)('g', 'tag')).toEqual(expected2)
-            expect(await idx.suggest(getDb)('go', 'tag')).toEqual(expected2)
-            expect(await idx.suggest(getDb)('gog', 'tag')).not.toEqual(
-                expected2,
-            )
-        })
+        //     const expected2 = ['good']
+        //     expect(await idx.suggest(getDb)('g', 'tag')).toEqual(expected2)
+        //     expect(await idx.suggest(getDb)('go', 'tag')).toEqual(expected2)
+        //     expect(await idx.suggest(getDb)('gog', 'tag')).not.toEqual(
+        //         expected2,
+        //     )
+        // })
 
         test('blank search', async () => {
             const { docs } = await search()

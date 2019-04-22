@@ -7,7 +7,6 @@ import { findFilteredUrls } from './filters'
 import { textSearch } from './text-search'
 import { paginate, applyScores } from './util'
 export { domainHasFavIcon } from './fav-icon'
-export { suggest, extendedSuggest } from './suggest'
 
 export const search = (getDb: () => Promise<Dexie>) => async ({
     query,
