@@ -14,6 +14,8 @@
     "modulePaths": ["<rootDir>"],
     "moduleNameMapper": {
         "\\.(css|less)$": "identity-obj-proxy",
+        "^user-logic$": "<rootDir>/external/user-logic/ts",
+        "^user-logic/lib/(.*)": "<rootDir>/external/user-logic/ts/$1",
         "^@worldbrain/storex$": "<rootDir>/external/@worldbrain/storex/ts",
         "^@worldbrain/memex-stemmer$": "<rootDir>/external/@worldbrain/memex-stemmer/ts",
         "^@worldbrain/storex/lib/(.*)": "<rootDir>/external/@worldbrain/storex/ts/$1",

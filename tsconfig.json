@@ -31,6 +31,8 @@
             "@worldbrain/memex-stemmer": [
                 "external/@worldbrain/memex-stemmer/ts"
             ],
+            "user-logic": ["external/user-logic/ts"],
+            "user-logic/lib/*": ["external/user-logic/ts/*"],
             "src/*": ["src/*"]
         },
         "lib": ["es2017", "dom", "dom.iterable", "esnext.asynciterable"]

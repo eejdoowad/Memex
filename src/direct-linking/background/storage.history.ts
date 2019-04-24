@@ -1,4 +1,4 @@
-import { ModuleHistory } from '@worldbrain/storex-pattern-modules'
+import { StorageModuleHistory } from '@worldbrain/storex-pattern-modules'
 
 export default {
     collections: {
@@ -44,4 +44,4 @@ export default {
             },
         ],
     },
-} as ModuleHistory
+} as StorageModuleHistory
