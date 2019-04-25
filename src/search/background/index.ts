@@ -1,12 +1,13 @@
 import { browser, Bookmarks } from 'webextension-polyfill-ts'
 
 import * as index from '..'
-import { Dexie, StorageManager } from '../types'
+import { StorageManager } from '../types'
 import SearchStorage from './storage'
 import QueryBuilder from '../query-builder'
 import { TabManager } from 'src/activity-logger/background'
+import { DBGet } from 'src/search'
 import { makeRemotelyCallable } from 'src/util/webextensionRPC'
-import { PageSearchParams, AnnotSearchParams, AnnotPage } from './types'
+import { PageSearchParams, AnnotSearchParams } from './types'
 import { SearchError, BadTermError, InvalidSearchError } from './errors'
 
 export default class SearchBackground {
@@ -14,7 +15,7 @@ export default class SearchBackground {
     private storage: SearchStorage
     private tabMan: TabManager
     private queryBuilderFactory: () => QueryBuilder
-    private getDb: () => Promise<Dexie>
+    private getDb: DBGet
 
     static handleSearchError(e: SearchError) {
         if (e instanceof BadTermError) {
@@ -58,7 +59,7 @@ export default class SearchBackground {
         bookmarksAPI?: Bookmarks.Static
     }) {
         this.tabMan = tabMan
-        this.getDb = () => storageManager.backend['dexieInstance']
+        this.getDb = async () => storageManager
         this.queryBuilderFactory = queryBuilder
         this.storage = new SearchStorage({
             storageManager,

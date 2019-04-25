@@ -1,9 +1,19 @@
-import { Dexie } from '../types'
+import Storex from '@worldbrain/storex'
 
 /**
  * Basic Model blueprint. Each Model representing a Dexie index table should extend this.
  */
 export default abstract class AbstractModel {
+    protected db: Storex
+
+    constructor(db: Storex) {
+        this.db = db
+    }
+
+    protected get collections() {
+        return Object.keys(this.db.registry.collections)
+    }
+
     /**
      * Models can have properties that we don't want to be enumerable, and hence not stored in the DB when
      *  writing statements like `db.put(someModelInstance)`. This is default props that can be passed to
@@ -45,5 +55,5 @@ export default abstract class AbstractModel {
     /**
      * Persist the current Model instance to the `db`.
      */
-    public abstract async save(getDb: () => Promise<Dexie>)
+    public abstract async save()
 }

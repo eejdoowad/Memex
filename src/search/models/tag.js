@@ -1,19 +1,19 @@
 import AbstractModel from './abstract-model'
 
 export default class Tag extends AbstractModel {
-    constructor({ name, url }) {
-        super()
+    constructor(db, { name, url }) {
+        super(db)
         this.name = name
         this.url = url
     }
 
-    async save(getDb) {
-        const db = await getDb()
-        return db.tags.put(this)
+    async save() {
+        return this.db.collection('tags').createObject(this)
     }
 
-    async delete(getDb) {
-        const db = await getDb()
-        return db.tags.delete([this.name, this.url])
+    async delete() {
+        return this.db
+            .collection('tags')
+            .deleteOneObject({ name: this.name, url: this.rul })
     }
 }

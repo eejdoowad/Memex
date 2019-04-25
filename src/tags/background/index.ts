@@ -1,11 +1,11 @@
 import TagStorage from './storage'
 import { TabManager } from 'src/activity-logger/background/tab-manager'
-import { Dexie, StorageManager } from 'src/search/types'
+import { StorageManager } from 'src/search/types'
 import { makeRemotelyCallable } from 'src/util/webextensionRPC'
 import normalizeUrl from 'src/util/encode-url-for-id'
 import { Windows } from 'webextension-polyfill-ts'
 import { getPage } from 'src/search/util'
-import { createPageFromTab } from 'src/search'
+import { createPageFromTab, DBGet } from 'src/search'
 
 interface Tabs {
     tabId: number
@@ -14,7 +14,7 @@ interface Tabs {
 
 export default class TagsBackground {
     private storage: TagStorage
-    private getDb: () => Promise<Dexie>
+    private getDb: DBGet
     private tabMan: TabManager
     private windows: Windows.Static
 
@@ -28,7 +28,7 @@ export default class TagsBackground {
         windows?: Windows.Static
     }) {
         this.storage = new TagStorage({ storageManager })
-        this.getDb = () => storageManager.backend['dexieInstance']
+        this.getDb = async () => storageManager
         this.tabMan = tabMan
         this.windows = windows
     }
@@ -64,7 +64,7 @@ export default class TagsBackground {
                 page.addVisit(time)
             }
 
-            await page.save(this.getDb)
+            await page.save()
         })
 
         return this.storage.addTagsToOpenTabs({

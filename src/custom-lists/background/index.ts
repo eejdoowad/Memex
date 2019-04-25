@@ -5,16 +5,16 @@ import internalAnalytics from '../../analytics/internal'
 import { EVENT_NAMES } from '../../analytics/internal/constants'
 import { TabManager } from 'src/activity-logger/background/tab-manager'
 import { Windows } from 'webextension-polyfill-ts'
-import { Dexie, StorageManager } from 'src/search/types'
+import { StorageManager } from 'src/search/types'
 import { getPage } from 'src/search/util'
-import { createPageFromTab } from 'src/search'
+import { createPageFromTab, DBGet } from 'src/search'
 import { Tab } from './types'
 
 export default class CustomListBackground {
     private storage: CustomListStorage
-    private getDb: () => Promise<Dexie>
     private tabMan: TabManager
     private windows: Windows.Static
+    private getDb: DBGet
 
     constructor({
         storageManager,
@@ -26,10 +26,8 @@ export default class CustomListBackground {
         windows?: Windows.Static
     }) {
         // Makes the custom list Table in indexed DB.
-        this.storage = new CustomListStorage({
-            storageManager,
-        })
-        this.getDb = () => storageManager.backend['dexieInstance']
+        this.storage = new CustomListStorage({ storageManager })
+        this.getDb = async () => storageManager
         this.tabMan = tabMan
         this.windows = windows
     }
@@ -211,7 +209,7 @@ export default class CustomListBackground {
                 page.addVisit(time)
             }
 
-            await page.save(this.getDb)
+            await page.save()
         })
 
         await Promise.all(

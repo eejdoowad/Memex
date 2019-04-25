@@ -3,7 +3,7 @@ import 'core-js/es7/symbol'
 
 import { browser } from 'webextension-polyfill-ts'
 import initStorex from './search/memex-storex'
-import getDb, { setStorexBackend } from './search/get-db'
+import getDb, { setStorex } from './search/get-db'
 import internalAnalytics from './analytics/internal'
 import initSentry from './util/raven'
 
@@ -77,7 +77,7 @@ backupModule.startRecordingChangesIfNeeded()
 let bgScript: BackgroundScript
 
 storageManager.finishInitialization().then(() => {
-    setStorexBackend(storageManager.backend)
+    setStorex(storageManager)
     internalAnalytics.registerOperations(eventLog)
     backupModule.storage.setupChangeTracking()
 

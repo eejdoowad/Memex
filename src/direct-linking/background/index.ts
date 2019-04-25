@@ -1,7 +1,7 @@
 import { browser, Tabs } from 'webextension-polyfill-ts'
 
 import { makeRemotelyCallable, remoteFunction } from 'src/util/webextensionRPC'
-import { StorageManager, Dexie, search as searchPages } from 'src/search'
+import { StorageManager } from 'src/search'
 import DirectLinkingBackend from './backend'
 import { setupRequestInterceptor } from './redirect'
 import { AnnotationRequests } from './request'

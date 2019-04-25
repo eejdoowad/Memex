@@ -1,7 +1,8 @@
 import Storex, { FindManyOptions } from '@worldbrain/storex'
 import { StorageCollection } from '@worldbrain/storex/lib/types/manager'
-import DexieOrig from 'dexie'
 import { FilterQuery } from 'dexie-mongoify'
+
+export type DBGet = () => Promise<Storex>
 
 export type SuggestOptions = FindManyOptions & { includePks?: boolean }
 export type SuggestResult<S, P> = Array<{
@@ -26,21 +27,6 @@ interface MemexCollection extends StorageCollection {
 export interface StorageManager extends Storex {
     collection(name: string): MemexCollection
     deleteDB(name: string): IDBOpenDBRequest
-}
-
-export interface Dexie extends DexieOrig {
-    // Quick typings as `dexie-mongoify` doesn't contain any
-    collection: <T>(
-        name: string,
-    ) => {
-        find(query: FilterQuery<T>): DexieOrig.Collection<T, any>
-        count(query: FilterQuery<T>): Promise<number>
-        update(
-            query: FilterQuery<T>,
-            update,
-        ): Promise<{ modifiedCount: number }>
-        remove(query: FilterQuery<T>): Promise<{ deletedCount: number }>
-    }
 }
 
 export type VisitInput = number

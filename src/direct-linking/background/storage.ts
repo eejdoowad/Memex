@@ -7,7 +7,7 @@ import {
 
 import history from './storage.history'
 
-import { createPageFromTab, Tag, Dexie, StorageManager } from '../../search'
+import { createPageFromTab, Tag, StorageManager, DBGet } from 'src/search'
 import { STORAGE_KEYS as IDXING_PREF_KEYS } from '../../options/settings/constants'
 import { AnnotationsListPlugin } from 'src/search/background/annots-list'
 import { AnnotSearchParams } from 'src/search/background/types'
@@ -34,7 +34,7 @@ export default class AnnotationStorage extends StorageModule {
     static LIST_ENTRIES_COLL = 'annotListEntries'
 
     private _browserStorageArea: Storage.StorageArea
-    private _getDb: () => Promise<Dexie>
+    private _getDb: DBGet
     private _annotationsColl: string
     private _bookmarksColl: string
     private _tagsColl: string
@@ -60,7 +60,7 @@ export default class AnnotationStorage extends StorageModule {
 
         this._browserStorageArea = browserStorageArea
 
-        this._getDb = () => storageManager.backend['dexieInstance']
+        this._getDb = async () => storageManager
     }
 
     getConfig = (): StorageModuleConfig =>
@@ -283,7 +283,7 @@ export default class AnnotationStorage extends StorageModule {
             stubOnly: !indexingPrefs.shouldIndexLinks,
         })
 
-        await page.loadRels(this._getDb)
+        await page.loadRels()
 
         // Add new visit if none, else page won't appear in results
         // TODO: remove once search changes to incorporate assoc. page data apart from bookmarks/visits
@@ -291,7 +291,7 @@ export default class AnnotationStorage extends StorageModule {
             page.addVisit()
         }
 
-        await page.save(this._getDb)
+        await page.save()
     }
 
     async getAnnotationByPk(url: string): Promise<Annotation> {

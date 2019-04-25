@@ -1,6 +1,6 @@
 import initStorageManager from '../memory-storex'
 import { StorageManager } from '..'
-import { setStorexBackend } from '../get-db'
+import { setStorex } from '../get-db'
 import SearchBg from './index'
 import normalize from 'src/util/encode-url-for-id'
 import CustomListBg from 'src/custom-lists/background'
@@ -106,7 +106,7 @@ describe.skip('Annotations search', () => {
         annotsStorage = annotsBg['annotationStorage']
 
         await storageManager.finishInitialization()
-        setStorexBackend(storageManager.backend)
+        setStorex(storageManager)
         await insertTestData()
     })
 

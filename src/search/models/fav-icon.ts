@@ -1,4 +1,5 @@
-import { Dexie } from '../types'
+import Storex from '@worldbrain/storex'
+
 import AbstractModel from './abstract-model'
 
 const favIcon = Symbol('favIconURI')
@@ -12,8 +13,8 @@ export default class FavIcon extends AbstractModel {
     public hostname: string
     public favIcon: Blob
 
-    constructor({ hostname, favIconURI }: Props) {
-        super()
+    constructor(db: Storex, { hostname, favIconURI }: Props) {
+        super(db)
 
         this.hostname = hostname
         this.favIconURI = favIconURI
@@ -41,20 +42,15 @@ export default class FavIcon extends AbstractModel {
         }
     }
 
-    public async delete(getDb: () => Promise<Dexie>) {
-        const db = await getDb()
-        return db.transaction('rw', db.table('favIcons'), () =>
-            db.table('favIcons').delete(this.hostname),
-        )
+    public async delete() {
+        return this.db
+            .collection('favIcons')
+            .deleteOneObject({ hostname: this.hostname })
     }
 
-    public async save(getDb: () => Promise<Dexie>) {
-        const db = await getDb()
-        return db.transaction('rw', db.table('favIcons'), () => {
-            // Could have been errors converting the data url to blob
-            if (this.favIcon !== null) {
-                db.table('favIcons').put(this)
-            }
-        })
+    public async save() {
+        if (this.favIcon !== null) {
+            this.db.collection('favIcons').createObject(this)
+        }
     }
 }

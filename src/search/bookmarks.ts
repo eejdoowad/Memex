@@ -3,9 +3,9 @@ import { Bookmarks } from 'webextension-polyfill-ts'
 import tabManager from '../activity-logger/background/tab-manager'
 import { createPageViaBmTagActs } from './on-demand-indexing'
 import { getPage } from './util'
-import { Dexie } from './types'
+import { DBGet } from './types'
 
-export const addBookmark = (getDb: () => Promise<Dexie>) => async ({
+export const addBookmark = (getDb: DBGet) => async ({
     url,
     timestamp = Date.now(),
     tabId,
@@ -23,11 +23,11 @@ export const addBookmark = (getDb: () => Promise<Dexie>) => async ({
     }
 
     page.setBookmark(timestamp)
-    await page.save(getDb)
+    await page.save()
     tabManager.setBookmarkState(url, true)
 }
 
-export const delBookmark = (getDb: () => Promise<Dexie>) => async ({
+export const delBookmark = (getDb: DBGet) => async ({
     url,
 }: Partial<Bookmarks.BookmarkTreeNode>) => {
     const page = await getPage(getDb)(url)
@@ -37,17 +37,15 @@ export const delBookmark = (getDb: () => Promise<Dexie>) => async ({
 
         // Delete if Page left orphaned, else just save current state
         if (page.shouldDelete) {
-            await page.delete(getDb)
+            await page.delete()
         } else {
-            await page.save(getDb)
+            await page.save()
         }
         tabManager.setBookmarkState(url, false)
     }
 }
 
-export const pageHasBookmark = (getDb: () => Promise<Dexie>) => async (
-    url: string,
-) => {
+export const pageHasBookmark = (getDb: DBGet) => async (url: string) => {
     const page = await getPage(getDb)(url)
 
     return page != null ? page.hasBookmark : false

@@ -1,3 +1,5 @@
+import Storex from '@worldbrain/storex'
+
 import AbstractModel from './abstract-model'
 
 export interface Props {
@@ -15,8 +17,8 @@ abstract class EventModel extends AbstractModel implements Props {
     url: string
     time: number
 
-    constructor({ url, time }: Props) {
-        super()
+    constructor(db: Storex, { url, time }: Props) {
+        super(db)
         this.url = url
         this.time = typeof time === 'number' ? time : +time
     }
