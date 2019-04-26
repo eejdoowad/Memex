@@ -81,7 +81,7 @@ export default class CustomListStorage extends StorageModule {
             },
             findListById: {
                 collection: CustomListStorage.CUSTOM_LISTS_COLL,
-                operation: 'findOneObject',
+                operation: 'findObject',
                 args: { id: '$id:pk' },
             },
             findListEntries: {
@@ -99,7 +99,7 @@ export default class CustomListStorage extends StorageModule {
             },
             findListByName: {
                 collection: CustomListStorage.CUSTOM_LISTS_COLL,
-                operation: 'findOneObject',
+                operation: 'findObject',
                 args: [{ name: '$name:string' }, { ignoreCase: ['name'] }],
             },
             findListByNames: {

@@ -139,22 +139,22 @@ export default class AnnotationStorage extends StorageModule {
             operations: {
                 findListById: {
                     collection: this._listsColl,
-                    operation: 'findOneObject',
+                    operation: 'findObject',
                     args: { id: '$id:pk' },
                 },
                 findBookmarkByUrl: {
                     collection: this._bookmarksColl,
-                    operation: 'findOneObject',
+                    operation: 'findObject',
                     args: { url: '$url:pk' },
                 },
                 findAnnotationByUrl: {
                     collection: this._annotationsColl,
-                    operation: 'findOneObject',
+                    operation: 'findObject',
                     args: { url: '$url:pk' },
                 },
                 findTagsByAnnotation: {
                     collection: this._tagsColl,
-                    operation: 'findOneObject',
+                    operation: 'findObject',
                     args: { url: '$url:string' },
                 },
                 createAnnotationForList: {

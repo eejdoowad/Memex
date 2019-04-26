@@ -6,8 +6,9 @@ import { NOTIF_TYPE_EVENT_IDS, EVENT_TYPES } from '../constants'
 
 export default class EventLogStorage extends StorageModule {
     static EVENT_LOG_COLL = 'eventLog'
+
     constructor(storageManager) {
-        super(storageManager)
+        super({ storageManager })
     }
 
     getConfig = (): StorageModuleConfig => ({
@@ -35,7 +36,7 @@ export default class EventLogStorage extends StorageModule {
             },
             findLatestEventOfType: {
                 collection: EventLogStorage.EVENT_LOG_COLL,
-                operation: 'findOneObject',
+                operation: 'findObject',
                 args: [
                     { type: '$type:int' },
                     {

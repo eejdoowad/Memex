@@ -46,7 +46,7 @@ export default class NotificationStorage extends StorageModule {
             },
             findNotificationById: {
                 collection: NotificationStorage.NOTIFS_COLL,
-                operation: 'findOneObject',
+                operation: 'findObject',
                 args: { id: '$id:pk' },
             },
             countNotifications: {

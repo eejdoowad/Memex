@@ -8,7 +8,7 @@ export default class NotificationBackground {
     static LAST_NOTIF_TIME = 'last-notif-proc-timestamp'
 
     constructor({ storageManager }) {
-        this.storage = new NotificationStorage(storageManager)
+        this.storage = new NotificationStorage({ storageManager })
     }
 
     setupRemoteFunctions() {
