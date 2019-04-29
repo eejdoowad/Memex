@@ -22,6 +22,13 @@ abstract class EventModel extends AbstractModel implements Props {
         this.url = url
         this.time = typeof time === 'number' ? time : +time
     }
+
+    get data() {
+        return {
+            url: this.url,
+            time: this.time,
+        }
+    }
 }
 
 export default EventModel

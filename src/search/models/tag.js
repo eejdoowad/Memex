@@ -7,8 +7,18 @@ export default class Tag extends AbstractModel {
         this.url = url
     }
 
+    get data() {
+        return {
+            url: this.url,
+            name: this.name,
+        }
+    }
+
     async save() {
-        return this.db.collection('tags').createObject(this)
+        const { object } = await this.db
+            .collection('tags')
+            .createObject(this.data)
+        return [object.name, object.url]
     }
 
     async delete() {

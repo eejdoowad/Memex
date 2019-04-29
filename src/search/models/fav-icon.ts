@@ -23,6 +23,13 @@ export default class FavIcon extends AbstractModel {
         Object.defineProperty(this, favIcon, AbstractModel.DEF_NON_ENUM_PROP)
     }
 
+    get data() {
+        return {
+            hostname: this.hostname,
+            favIcon: this.favIcon,
+        }
+    }
+
     get favIconURI() {
         if (this.favIcon && !this[favIcon]) {
             return AbstractModel.getBlobURL(this.favIcon)
@@ -50,7 +57,10 @@ export default class FavIcon extends AbstractModel {
 
     public async save() {
         if (this.favIcon !== null) {
-            this.db.collection('favIcons').createObject(this)
+            const { object } = await this.db
+                .collection('favIcons')
+                .createObject(this.data)
+            return object.hostname
         }
     }
 }

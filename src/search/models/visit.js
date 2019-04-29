@@ -64,6 +64,9 @@ export default class Visit extends EventModel {
             return this.pk
         }
 
-        return this.db.collection('visits').createObject(this)
+        const { object } = await this.db
+            .collection('visits')
+            .createObject(this.data)
+        return [object.time, object.url]
     }
 }

@@ -108,6 +108,21 @@ export default class Page extends AbstractModel
         })
     }
 
+    get data() {
+        return {
+            url: this.url,
+            fullUrl: this.fullUrl,
+            fullTitle: this.fullTitle,
+            text: this.text,
+            terms: this.terms,
+            urlTerms: this.urlTerms,
+            titleTerms: this.titleTerms,
+            domain: this.domain,
+            hostname: this.hostname,
+            screenshot: this.screenshot,
+        }
+    }
+
     get screenshotURI() {
         return this[screenshot]
     }
@@ -317,7 +332,9 @@ export default class Page extends AbstractModel
                 }
 
                 // Persist current page state
-                await this.db.collection('pages').createObject(this)
+                const { object } = await this.db
+                    .collection('pages')
+                    .createObject(this.data)
 
                 // Insert or update all associated visits + tags
                 const [visitIds, tagIds] = await Promise.all([
@@ -347,6 +364,8 @@ export default class Page extends AbstractModel
                         name: { $nin: tagNames },
                     }),
                 ])
+
+                return object.url
             },
         )
     }

@@ -55,5 +55,10 @@ export default abstract class AbstractModel {
     /**
      * Persist the current Model instance to the `db`.
      */
-    public abstract async save()
+    public abstract async save(): Promise<any>
+
+    /**
+     * Returns the raw data persisted in the DB.
+     */
+    public abstract get data(): object
 }
