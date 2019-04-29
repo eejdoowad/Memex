@@ -11,8 +11,8 @@ import { PageSearchParams, AnnotSearchParams } from './types'
 import { SearchError, BadTermError, InvalidSearchError } from './errors'
 
 export default class SearchBackground {
+    storage: SearchStorage
     private backend
-    private storage: SearchStorage
     private tabMan: TabManager
     private queryBuilderFactory: () => QueryBuilder
     private getDb: DBGet

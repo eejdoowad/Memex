@@ -1,5 +1,6 @@
 import 'babel-polyfill'
 import 'core-js/es7/symbol'
+import { registerModuleMapCollections } from '@worldbrain/storex-pattern-modules'
 
 import { browser } from 'webextension-polyfill-ts'
 import initStorex from './search/memex-storex'
@@ -73,6 +74,16 @@ const backupModule = new backup.BackupBackgroundModule({
 backupModule.setBackendFromStorage()
 backupModule.setupRemoteFunctions()
 backupModule.startRecordingChangesIfNeeded()
+
+registerModuleMapCollections(storageManager.registry, {
+    annotations: directLinking.annotationStorage,
+    notifications: notifications.storage,
+    customList: customList.storage,
+    backup: backupModule.storage,
+    eventLog: eventLog.storage,
+    search: search.storage,
+    tags: tags.storage,
+})
 
 let bgScript: BackgroundScript
 

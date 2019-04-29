@@ -18,7 +18,7 @@ interface TabArg {
 
 export default class DirectLinkingBackground {
     private backend: DirectLinkingBackend
-    private annotationStorage: AnnotationStorage
+    annotationStorage: AnnotationStorage
     private sendAnnotation: AnnotationSender
     private requests: AnnotationRequests
 

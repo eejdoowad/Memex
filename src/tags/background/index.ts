@@ -13,7 +13,7 @@ interface Tabs {
 }
 
 export default class TagsBackground {
-    private storage: TagStorage
+    storage: TagStorage
     private getDb: DBGet
     private tabMan: TabManager
     private windows: Windows.Static

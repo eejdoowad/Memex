@@ -11,7 +11,7 @@ import { createPageFromTab, DBGet } from 'src/search'
 import { Tab } from './types'
 
 export default class CustomListBackground {
-    private storage: CustomListStorage
+    storage: CustomListStorage
     private tabMan: TabManager
     private windows: Windows.Static
     private getDb: DBGet
