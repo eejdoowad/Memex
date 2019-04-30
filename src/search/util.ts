@@ -18,12 +18,12 @@ export const getPage = (getDb: DBGet) => async (url: string) => {
         .findOneObject<Page>({ url: normalizeUrl(url) })
         .catch(initErrHandler())
 
-    if (page != null) {
-        // Force-load any related records from other tables
-        await new Page(db, page).loadRels()
+    if (page == null) {
+        return null
     }
-
-    return page
+    const result = new Page(db, page)
+    await result.loadRels()
+    return result
 }
 
 /**

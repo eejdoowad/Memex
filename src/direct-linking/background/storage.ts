@@ -35,28 +35,12 @@ export default class AnnotationStorage extends StorageModule {
 
     private _browserStorageArea: Storage.StorageArea
     private _getDb: DBGet
-    private _annotationsColl: string
-    private _bookmarksColl: string
-    private _tagsColl: string
-    private _listsColl: string
-    private _listEntriesColl: string
 
     constructor({
         storageManager,
         browserStorageArea = browser.storage.local,
-        annotationsColl = AnnotationStorage.ANNOTS_COLL,
-        bookmarksColl = AnnotationStorage.BMS_COLL,
-        tagsColl = AnnotationStorage.TAGS_COLL,
-        listsColl = AnnotationStorage.LISTS_COLL,
-        listEntriesColl = AnnotationStorage.LIST_ENTRIES_COLL,
     }: AnnotationStorageProps) {
         super({ storageManager })
-
-        this._annotationsColl = annotationsColl
-        this._tagsColl = tagsColl
-        this._bookmarksColl = bookmarksColl
-        this._listsColl = listsColl
-        this._listEntriesColl = listEntriesColl
 
         this._browserStorageArea = browserStorageArea
 
@@ -67,7 +51,7 @@ export default class AnnotationStorage extends StorageModule {
         withHistory({
             history,
             collections: {
-                [this._annotationsColl]: {
+                [AnnotationStorage.ANNOTS_COLL]: {
                     version: new Date('2019-02-19'),
                     fields: {
                         pageTitle: { type: 'text' },
@@ -89,7 +73,7 @@ export default class AnnotationStorage extends StorageModule {
                         { field: 'comment' },
                     ],
                 },
-                [this._listEntriesColl]: {
+                [AnnotationStorage.LIST_ENTRIES_COLL]: {
                     version: new Date(2019, 0, 4),
                     fields: {
                         listId: { type: 'int' },
@@ -102,7 +86,7 @@ export default class AnnotationStorage extends StorageModule {
                         { field: 'url' },
                     ],
                 },
-                [this._bookmarksColl]: {
+                [AnnotationStorage.BMS_COLL]: {
                     version: new Date(2019, 0, 5),
                     fields: {
                         url: { type: 'string' },
@@ -138,43 +122,43 @@ export default class AnnotationStorage extends StorageModule {
             },
             operations: {
                 findListById: {
-                    collection: this._listsColl,
-                    operation: 'findObject',
+                    collection: AnnotationStorage.LISTS_COLL,
+                    operation: 'findOneObject',
                     args: { id: '$id:pk' },
                 },
                 findBookmarkByUrl: {
-                    collection: this._bookmarksColl,
-                    operation: 'findObject',
+                    collection: AnnotationStorage.BMS_COLL,
+                    operation: 'findOneObject',
                     args: { url: '$url:pk' },
                 },
                 findAnnotationByUrl: {
-                    collection: this._annotationsColl,
-                    operation: 'findObject',
+                    collection: AnnotationStorage.ANNOTS_COLL,
+                    operation: 'findOneObject',
                     args: { url: '$url:pk' },
                 },
                 findTagsByAnnotation: {
-                    collection: this._tagsColl,
-                    operation: 'findObject',
+                    collection: AnnotationStorage.TAGS_COLL,
+                    operation: 'findOneObject',
                     args: { url: '$url:string' },
                 },
                 createAnnotationForList: {
-                    collection: this._listEntriesColl,
+                    collection: AnnotationStorage.LIST_ENTRIES_COLL,
                     operation: 'createObject',
                 },
                 createBookmark: {
-                    collection: this._bookmarksColl,
+                    collection: AnnotationStorage.BMS_COLL,
                     operation: 'createObject',
                 },
                 createAnnotation: {
-                    collection: this._annotationsColl,
+                    collection: AnnotationStorage.ANNOTS_COLL,
                     operation: 'createObject',
                 },
                 createTag: {
-                    collection: this._tagsColl,
+                    collection: AnnotationStorage.TAGS_COLL,
                     operation: 'createObject',
                 },
                 editAnnotation: {
-                    collection: this._annotationsColl,
+                    collection: AnnotationStorage.ANNOTS_COLL,
                     operation: 'updateOneObject',
                     args: [
                         { url: '$url:pk' },
@@ -187,28 +171,28 @@ export default class AnnotationStorage extends StorageModule {
                     ],
                 },
                 deleteAnnotation: {
-                    collection: this._annotationsColl,
+                    collection: AnnotationStorage.ANNOTS_COLL,
                     operation: 'deleteOneObject',
                     args: { url: '$url:pk' },
                 },
                 deleteAnnotationFromList: {
-                    collection: this._listEntriesColl,
+                    collection: AnnotationStorage.LIST_ENTRIES_COLL,
                     operation: 'deleteObjects',
                     args: { listId: '$listId:int', url: '$url:string' },
                 },
                 deleteBookmarkByUrl: {
-                    collection: this._bookmarksColl,
+                    collection: AnnotationStorage.BMS_COLL,
                     operation: 'deleteOneObject',
                     args: { url: '$url:pk' },
                 },
                 deleteTags: {
-                    collection: this._tagsColl,
+                    collection: AnnotationStorage.TAGS_COLL,
                     operation: 'deleteObjects',
                     args: { name: '$name:string', url: '$url:string' },
                 },
                 listAnnotsByPage: {
                     operation: AnnotationsListPlugin.LIST_BY_PAGE_OP_ID,
-                    args: [],
+                    args: ['$params:any'],
                 },
             },
         })
@@ -299,10 +283,9 @@ export default class AnnotationStorage extends StorageModule {
     }
 
     async getAllAnnotationsByUrl(params: AnnotSearchParams) {
-        const results: Annotation[] = await this.operation(
-            'listAnnotsByPage',
+        const results: Annotation[] = await this.operation('listAnnotsByPage', {
             params,
-        )
+        })
 
         return results
     }

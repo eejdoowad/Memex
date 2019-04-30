@@ -65,7 +65,7 @@ export default class SearchStorage extends StorageModule {
             [PageUrlMapperPlugin.MAP_OP_ID]: {
                 operation: PageUrlMapperPlugin.MAP_OP_ID,
                 args: [
-                    { pageUrls: '$pageUrls:string[]' },
+                    '$pageUrls:string[]',
                     {
                         base64Img: '$base64Img:boolean',
                         upperTimeBound: '$endDate:number',

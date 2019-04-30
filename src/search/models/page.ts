@@ -273,9 +273,11 @@ export default class Page extends AbstractModel
                     .collection('bookmarks')
                     .findOneObject<Bookmark>({ url: this.url })
 
-                this[visitsProp] = visits
-                this[tagsProp] = tags
+                this[visitsProp] = visits.map(v => new Visit(this.db, v))
+                this[tagsProp] = tags.map(t => new Tag(this.db, t))
                 this[bookmarkProp] = bookmark
+                    ? new Bookmark(this.db, bookmark)
+                    : undefined
 
                 // Derive latest time of either bookmark or visits
                 let latest = bookmark != null ? bookmark.time : 0
